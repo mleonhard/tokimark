@@ -156,16 +156,18 @@ The app adds the tokimark to the end of the file.
 This takes about a second.
 The tokimark makes the file about N% bigger (TODO: Update with real number).
 
-To make a tokimark for a document, you need software and a connection to the Internet.
-The software calculates a hash for your document
-and sends the hash to a public tokimark server.
-The server sends back a tokimark file.
-You can save the tokimark file on your computer.
-A tokimark file is a N KB file (TODO: Update with real number).
+You can use software to add a tokimark to a document.
+If you change the document, the tokimark becomes invalid.
+Your document editing software will warn you about this if you try to edit a document
+that has a tokimark.
+The tokimark makes the document file about N% bigger (TODO: Update with real number).
+
+If your document editor does not support tokimarks,
+you can use another software program to make and save a tokimark file.
 
 File storage services will include Tokimark support.
 When you upload a document, the app automatically makes a tokimark.
-If you already have a tokimark for the document, you can upload the document and tokimark file together.
+If you have a tokimark for the document in a tokimark file, you can upload the document and tokimark file together.
 
 ## Verify a Tokimark
 You use software to verify a document's tokimark.
@@ -262,18 +264,6 @@ Five seconds is a normal marking interval.
 A very short marking interval means the chance of fakery is slim.
 
 # Technical Details
-## Hashing Algorithm
-Tokimarks use [SHA3-512](https://en.wikipedia.org/wiki/SHA-3).
-
-Every hash is a 64-byte value.
-
-## Timestamps
-Tokimark timestamps are the number of seconds since the epoch (1970-01-01T00:00:00Z).
-
-In tokimark format, every timestamp is
-a big-endian 64-bit unsigned integer encoded in lower-case hexadecimal.
-It always includes leading zeros.
-
 ## Tokimark Servers
 Tokimark servers listen on TCP port N (TODO: Update with real port number).
 
@@ -285,6 +275,18 @@ Every tokimark server is independent.
 
 Tokimark servers connect to other servers and call the same RPCs as clients.
 There is no special protocol for server-server connections.
+
+## Hashing Algorithm
+Tokimarks use [SHA3-512](https://en.wikipedia.org/wiki/SHA-3).
+Every hash is a 64-byte value.
+Tokimark format encodes every hash in lower-case hexadecimal.
+
+## Timestamp
+Tokimark timestamps are the number of seconds since the epoch, 1970-01-01T00:00:00Z.
+
+Tokimark format encodes every timestamp as a
+big-endian 64-bit unsigned integer encoded in lower-case hexadecimal.
+It always includes leading zeros.
 
 ## Block Format
 
@@ -307,7 +309,7 @@ The new block's timestamp must be higher than the previous block's timestamp.
 
 It also gets the latest blocks of other tokimark servers and adds their hashes to the new block.
 It adds only hashes of blocks with timestamps that are lower than the new block.
-Server blocks form a mesh that is continually extended on one side.
+Server blocks form a mesh that the servers continually extend on one side.
 
 Example block with timestamp 2021-10-22T23:18:50Z:
 ```
@@ -327,7 +329,7 @@ Every tokimark is less than 64 KiB in length.
 
 `$hash0A` is the hash of the document's bytes.
 
-`$hash0B` is the nonce.
+`$hash0B` is the nonce, a random value chosen by the client.
 
 The hashes form a chain:
 - `$hash0A` is the first hash in the chain.
@@ -340,7 +342,7 @@ This regular expression matches all valid tokimarks:
 `e0/tokimark [0-9a-f]{128}{2,64} [0-9a-f]{128}{1,447}[0-9a-f]{16}`.
 
 
-## New Tokimark RPC
+## Tokimark-New RPC
 To make a new tokimark for a document,
 the client connects to the server's TCP port and sends the request:
 
@@ -355,24 +357,18 @@ are sequences of 64 bytes encoded in lower-case hexadecimal.
 
 `$nonce` is a random 64-byte value.
 
-This regular expression matches all valid New Tokimark RPC requests:
+This regular expression matches all valid Tokimark-New RPC requests:
 `e0/tokimark-new [0-9a-f]{256}\n`.
 
 Example request for the document "doc0" and a random nonce:
 `e0/tokimark-new 5552aa41192b46651fdcb33bdee0d9dd4356307be24ed142089ab615500d1f4e975aae9fd82ee628d466a784722dbf908bab736a761457ad69eb3e19b9a57c6ffe3b5b266eb8038a0c06757399624f1debb3e0df2618341054881010ca14c3782ff13aaf83ce9ca4262b5c435cadfb9f3fd87c63ddbfa89de20d38c1c5f25b94\n`
 
 The server responds with one of:
-- ```
-   e0/tokimark $tokimark\n
-   ```
-- ```
-   e0/tokimark-transient-error $error_message\n
-   ```
-- ```
-   e0/tokimark-permanent-error $error_message\n
-   ```
+- `e0/tokimark $tokimark\n`
+- `e0/tokimark-transient-error $error_message\n`
+- `e0/tokimark-permanent-error $error_message\n`
 
-`$error_message` is any valid UTF-8 string not containing '\n'.
+`$error_message` is any valid UTF-8 string not containing `\n`.
 The string length must be 1-200 bytes.
 
 When the server returns a `tokimark-transient-error`, the client may retry the request after a short delay.
