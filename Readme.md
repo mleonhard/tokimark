@@ -11,20 +11,26 @@ Tokimarks for Verifying Media Files
   - [Digital Signatures](#digital-signatures)
 - [How to Use Tokimarks](#how-to-use-tokimarks)
   - [Make a Tokimark](#make-a-tokimark)
-  - [Verify a Tokimark](#verify-a-tokimark)
+  - [Check a Tokimark](#check-a-tokimark)
   - [Offline Tokimarks](#offline-tokimarks)
   - [Aftermarks](#aftermarks)
   - [Livemarking a Stream](#livemarking-a-stream)
   - [Watching a Livemarked Stream](#watching-a-livemarked-stream)
   - [Verifying a Livemarked Video](#verifying-a-livemarked-video)
-- [Technical Details](#technical-details)
+- [Data](#data)
   - [Hashing Algorithm](#hashing-algorithm)
-  - [Timestamps](#timestamps)
-  - [Tokimark Servers](#tokimark-servers)
-  - [Blocks](#blocks)
-  - [Afterstamp](#afterstamp)
-  - [Implementations](#implementations)
-  - [Summary](#summary)
+  - [Timestamp](#timestamp)
+  - [Block](#block)
+  - [Tokimark](#tokimark)
+  - [Offline Tokimark](#offline-tokimark)
+- [Tokimark Servers](#tokimark-servers)
+  - [Tokimark-New RPC](#tokimark-new-rpc)
+  - [Tokimark-Get-Containing-Block RPC](#tokimark-get-containing-block-rpc)
+  - [Get-Daymark RPC](#get-daymark-rpc)
+  - [Get-Dayblock RPC](#get-dayblock-rpc)
+- [Operations](#operations)
+  - [Verify a Tokimark](#verify-a-tokimark)
+  - [Verify an Offline Tokimark](#verify-an-offline-tokimark)
 - [Unsolved Problems](#known-problems)
 - [Solved Problems](#solved-problems)
   - [Known Upload Leak](#known-upload-leak)
@@ -168,7 +174,7 @@ File storage services will include Tokimark support.
 When you upload a document, the app automatically makes a tokimark.
 If you have a tokimark for the document in a tokimark file, you can upload the document and tokimark file together.
 
-## Verify a Tokimark
+## Check a Tokimark
 You use software to verify a document's tokimark.
 When the software says the tokimark is good, then you can be sure of two things:
 1. The document existed at the time the tokimark was made.
@@ -260,19 +266,9 @@ This is the amount of time that a malicious streamer had to edit each section of
 Five seconds is a normal marking interval.
 A very short marking interval means the chance of fakery is slim.
 
-# Technical Details
-## Tokimark Servers
-Tokimark servers listen on TCP port N (TODO: Update with real port number).
+The remainder of this document contains technical details.
 
-Client machines can connect to a tokimark server and perform RPCs to make and verify tokimarks.
-
-Most tokimark servers are public and provide service to any machine on the Internet.
-
-Every tokimark server is independent.
-
-Tokimark servers connect to other servers and call the same RPCs as clients.
-There is no special protocol for server-server connections.
-
+# Data
 ## Hashing Algorithm
 Tokimarks use [SHA3-512](https://en.wikipedia.org/wiki/SHA-3).
 Every hash is a 64-byte value.
@@ -285,7 +281,7 @@ Tokimark format encodes every timestamp as a
 big-endian 64-bit unsigned integer encoded in lower-case hexadecimal.
 It always includes leading zeros.
 
-## Block Format
+## Block
 A block is a sequence of hashes and a timestamp.
 ```
 $hash0$hash1$hash2...$hashN$timestamp
@@ -312,18 +308,20 @@ Example block with timestamp 2021-10-22T23:18:50Z:
 381b6048fb92d3426d442e86c38f56e895d96a586caf5877d5638443ccc6c6e52c9b0e4955b10247d942321326e603ba92aea82d1e1fd813ead9aa1cd3f09e54d239776717251703c0d2a106c6863cbe1c056d058df630948c1431ec2deee9ca7eada897ed053dad443b9b8b3ad621eaf499891ed823880b230f4a61a971b2b31187b8a4177e6ef0ab85c063e60213f02d4ad9fbb618752fecc2b5c1783aad526c1ea02faf76193af6a12f5b5ab6fda7c8e1bf06a3d4a1ae5bdc86f25724eda827ada9d5345160db07663f9c6130e7ee169f745c93d969917faa31866aab09dfd5347a51bb359b702f2fc6f8ca1340f505c03c7d304481fae42a24f33975604800000000617346da
 ```
 
-## Tokimark Format
+## Tokimark
 A tokimark is a sequence of hashes and a block.
 ```
 e0/tokimark $hash0A$hash0B$hash1B$hash2B...$hashNB $block
 ```
 
-Every tokimark must contain 2-64 hashes.
+Every tokimark must contain 1-64 hashes.
 Every tokimark is less than 64 KiB in length.
 
 `$hash0A` is the hash of the document's bytes.
 
 `$hash0B` is the nonce, a random value chosen by the client.
+
+The server that creates the tokimark chooses values for the remaining hashes.
 
 The hashes form a chain:
 - `$hash0A` is the first hash in the chain.
@@ -339,6 +337,37 @@ Example tokimark:
 ```
 e0/tokimark 5552aa41192b46651fdcb33bdee0d9dd4356307be24ed142089ab615500d1f4e975aae9fd82ee628d466a784722dbf908bab736a761457ad69eb3e19b9a57c6f1b4366dac0d37f37b1cf4a85441045b3a22ba572c11d99c7a8f2356b6ea54851162405989eeb786a7384561d0be7c61152de87c260def9873ca536aee666a77dd715729eb9bce054594591393ed03b7123000ff2b5fa75b9ce89c4e31bbbf7b44e5258b81fdf34c97dfb920b1f50b5da410b45f5319ef2c50c784e2be26d31d71770d773492920c7c9e6dba3d67f08e1090f611d6da8e9a34d11b3d3701f745020e93eae07858d066f4d9a3e88634550df992f73400aa5a31adfa5d9d2324535 381b6048fb92d3426d442e86c38f56e895d96a586caf5877d5638443ccc6c6e52c9b0e4955b10247d942321326e603ba92aea82d1e1fd813ead9aa1cd3f09e54d239776717251703c0d2a106c6863cbe1c056d058df630948c1431ec2deee9ca7eada897ed053dad443b9b8b3ad621eaf499891ed823880b230f4a61a971b2b31187b8a4177e6ef0ab85c063e60213f02d4ad9fbb618752fecc2b5c1783aad526c1ea02faf76193af6a12f5b5ab6fda7c8e1bf06a3d4a1ae5bdc86f25724eda827ada9d5345160db07663f9c6130e7ee169f745c93d969917faa31866aab09dfd5347a51bb359b702f2fc6f8ca1340f505c03c7d304481fae42a24f33975604800000000617346da
 ```
+
+## Offline Tokimark
+Once a day, every tokimark server makes a tokimark for every block it created that day.
+We call the tokimark for a particular second a 'daymark'.
+
+A client can use the Get-Daymark RPC to download the daymark for a tokimark.
+It stores the tokimark and daymark together.
+We call such a tokimark an "offline tokimark".
+
+Offline tokimark format:
+```
+e0/tokimark $tokimark\n$daymark`
+```
+
+Example offline tokimark:
+```
+e0/tokimark 5552aa41192b46651fdcb33bdee0d9dd4356307be24ed142089ab615500d1f4e975aae9fd82ee628d466a784722dbf908bab736a761457ad69eb3e19b9a57c6f1b4366dac0d37f37b1cf4a85441045b3a22ba572c11d99c7a8f2356b6ea54851162405989eeb786a7384561d0be7c61152de87c260def9873ca536aee666a77dd715729eb9bce054594591393ed03b7123000ff2b5fa75b9ce89c4e31bbbf7b44e5258b81fdf34c97dfb920b1f50b5da410b45f5319ef2c50c784e2be26d31d71770d773492920c7c9e6dba3d67f08e1090f611d6da8e9a34d11b3d3701f745020e93eae07858d066f4d9a3e88634550df992f73400aa5a31adfa5d9d2324535 381b6048fb92d3426d442e86c38f56e895d96a586caf5877d5638443ccc6c6e52c9b0e4955b10247d942321326e603ba92aea82d1e1fd813ead9aa1cd3f09e54d239776717251703c0d2a106c6863cbe1c056d058df630948c1431ec2deee9ca7eada897ed053dad443b9b8b3ad621eaf499891ed823880b230f4a61a971b2b31187b8a4177e6ef0ab85c063e60213f02d4ad9fbb618752fecc2b5c1783aad526c1ea02faf76193af6a12f5b5ab6fda7c8e1bf06a3d4a1ae5bdc86f25724eda827ada9d5345160db07663f9c6130e7ee169f745c93d969917faa31866aab09dfd5347a51bb359b702f2fc6f8ca1340f505c03c7d304481fae42a24f33975604800000000617346da\n
+fe310de4fa470a31ba73be2ee24d02ec239893701a9bdd7c68e658272dbe486553693248a0a2bdb2dfc55500ce173b5751969e67c5e4037d0a77e76a82fe12de648cdb7bbf9efc26f1713eaba3809ac1bade023b6e441c389841c110bdd97b84f73ededb51fa05194f053ff755fa055a48d8e63a74bf200f462d652c326b34332850a51dc9483a28f4cdd3c805c333b2ba8508297daa101cc63e27a5fa101b188dc9ef130bac2611c1b9ddebdc137c5a242e3f92340f537408df17dea2e3b69a3e4fff3b613e33f99973b0206de4d5eb14f5ed75c320495e03c209ade164a40e4e890b86137687c079792c79b66be4f17f3a9279c064e3cdac136ded1398d313 09806998cd4d961cc1d72ddf1742b35048e812fe406a1852ff55e1b96f3a823b4b6ed9c00b858e794690addf2817b135132b0a525b45d6c5eee752ee0e250c1cb388e31765ca23427f79b0f81aaf9899af83da0bb87d69c671fecf3e515b739ab503322cd7c67f6e463e565a84ba43c0034a1e33d8bf8184e9ea9c47ee3c87588b6155c15ae1a8e158a10fb21313fa7176b2d6164092d003bef3db083658a4f79c7acb9391270dfe57c64fb758880bca1311f66c144682e15fb4c781e27258df569e49677c11fba84ec80bede16a528255240645a8716d15f2206d26e349b8756c727021091f5422b4d4941ed9c01098944ccc62c17e4e41e5dd4036eff1eacd0000000061735080
+```
+
+# Tokimark Servers
+Tokimark servers listen on TCP port N (TODO: Update with real port number).
+
+Client machines can connect to a tokimark server and perform RPCs to make and verify tokimarks.
+
+Most tokimark servers are public and provide service to any machine on the Internet.
+
+Every tokimark server is independent.
+
+Tokimark servers connect to other servers and call the same RPCs as clients.
+There is no special protocol for server-server connections.
 
 ## Tokimark-New RPC
 To make a new tokimark for a document,
@@ -400,37 +429,6 @@ The server responds with one of:
 
 If the client retries after receiving `tokimark-not-found`, it must use backoff.
 
-## Verify a Tokimark
-A client can verify a tokimark with this procedure:
-1. Verify the format of the tokimark.
-2. Calculate the root hash.
-3. Confirm that the block contains the root hash.
-4. Calculate the block hash.
-5. Connect to any trusted tokimark server
-   and call Tokimark-Get-Containing-Block RPC with the block hash and timestamp.
-6. Confirm that the returned block contains the block hash
-   and its timestamp that is not before the block timestamp.
-7. Optionally, repeat with multiple tokimark servers.
-
-## Offline Tokimark Format
-Once a day, every tokimark server makes a tokimark for every block it created that day.
-We call the tokimark for a particular second a 'daymark'.
-
-A client can use the Get-Daymark RPC to download the daymark for a tokimark.
-It stores the tokimark and daymark together.
-We call such a tokimark an "offline tokimark".
-
-Offline tokimark format:
-```
-e0/tokimark $tokimark\n$daymark`
-```
-
-Example offline tokimark:
-```
-e0/tokimark 5552aa41192b46651fdcb33bdee0d9dd4356307be24ed142089ab615500d1f4e975aae9fd82ee628d466a784722dbf908bab736a761457ad69eb3e19b9a57c6f1b4366dac0d37f37b1cf4a85441045b3a22ba572c11d99c7a8f2356b6ea54851162405989eeb786a7384561d0be7c61152de87c260def9873ca536aee666a77dd715729eb9bce054594591393ed03b7123000ff2b5fa75b9ce89c4e31bbbf7b44e5258b81fdf34c97dfb920b1f50b5da410b45f5319ef2c50c784e2be26d31d71770d773492920c7c9e6dba3d67f08e1090f611d6da8e9a34d11b3d3701f745020e93eae07858d066f4d9a3e88634550df992f73400aa5a31adfa5d9d2324535 381b6048fb92d3426d442e86c38f56e895d96a586caf5877d5638443ccc6c6e52c9b0e4955b10247d942321326e603ba92aea82d1e1fd813ead9aa1cd3f09e54d239776717251703c0d2a106c6863cbe1c056d058df630948c1431ec2deee9ca7eada897ed053dad443b9b8b3ad621eaf499891ed823880b230f4a61a971b2b31187b8a4177e6ef0ab85c063e60213f02d4ad9fbb618752fecc2b5c1783aad526c1ea02faf76193af6a12f5b5ab6fda7c8e1bf06a3d4a1ae5bdc86f25724eda827ada9d5345160db07663f9c6130e7ee169f745c93d969917faa31866aab09dfd5347a51bb359b702f2fc6f8ca1340f505c03c7d304481fae42a24f33975604800000000617346da\n
-fe310de4fa470a31ba73be2ee24d02ec239893701a9bdd7c68e658272dbe486553693248a0a2bdb2dfc55500ce173b5751969e67c5e4037d0a77e76a82fe12de648cdb7bbf9efc26f1713eaba3809ac1bade023b6e441c389841c110bdd97b84f73ededb51fa05194f053ff755fa055a48d8e63a74bf200f462d652c326b34332850a51dc9483a28f4cdd3c805c333b2ba8508297daa101cc63e27a5fa101b188dc9ef130bac2611c1b9ddebdc137c5a242e3f92340f537408df17dea2e3b69a3e4fff3b613e33f99973b0206de4d5eb14f5ed75c320495e03c209ade164a40e4e890b86137687c079792c79b66be4f17f3a9279c064e3cdac136ded1398d313 09806998cd4d961cc1d72ddf1742b35048e812fe406a1852ff55e1b96f3a823b4b6ed9c00b858e794690addf2817b135132b0a525b45d6c5eee752ee0e250c1cb388e31765ca23427f79b0f81aaf9899af83da0bb87d69c671fecf3e515b739ab503322cd7c67f6e463e565a84ba43c0034a1e33d8bf8184e9ea9c47ee3c87588b6155c15ae1a8e158a10fb21313fa7176b2d6164092d003bef3db083658a4f79c7acb9391270dfe57c64fb758880bca1311f66c144682e15fb4c781e27258df569e49677c11fba84ec80bede16a528255240645a8716d15f2206d26e349b8756c727021091f5422b4d4941ed9c01098944ccc62c17e4e41e5dd4036eff1eacd0000000061735080
-```
-
 ## Get-Daymark RPC
 To get a daymark for a tokimark, the client connects to the server's TCP port and sends this request:
 
@@ -472,6 +470,19 @@ The server responds with one of:
 - `e0/tokimark-transient-error $error_message\n`
 - `e0/tokimark-permanent-error $error_message\n`
 
+# Operations
+## Verify a Tokimark
+A client can verify a tokimark with this procedure:
+1. Verify the format of the tokimark.
+2. Calculate the root hash.
+3. Confirm that the block contains the root hash.
+4. Calculate the block hash.
+5. Connect to any trusted tokimark server
+   and call Tokimark-Get-Containing-Block RPC with the block hash and timestamp.
+6. Confirm that the returned block contains the block hash
+   and its timestamp that is not before the block timestamp.
+7. Optionally, repeat with multiple tokimark servers.
+
 ## Verify an Offline Tokimark
 For one server and day, all the daymarks share a single block.
 We call this the 'dayblock'.
@@ -491,7 +502,9 @@ A client verifies an offline tokimark with these steps:
 7. Confirm that the client previously downloaded the dayblock hash and timestamp.
 
 
+
 ## TO DO
+- Add section on privacy nonce
 - Add Solved Problems section
 - Add Unsolved Problems section
 - Update TOC
