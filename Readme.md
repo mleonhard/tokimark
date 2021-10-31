@@ -41,7 +41,6 @@ Tokimarking is a way to show that a particular computer file existed at a partic
 and hasn't been modified since then.
 
 # What It's Good For
-
 ## Tamper-evident Ballot Boxes
 We can build a ballot box with a light and a camera inside that records continuously.
 The camera uses mirrors and lenses to see all around the inside of the box.
@@ -243,7 +242,6 @@ You can livemark streaming audio, too.  Use an app to play the live aftermark ji
 Use the same microphone to capture your voice and the jingle.
 
 ## Watching a Livemarked Stream
-
 People use software to watch your stream.
 The software sees the live aftermark and shows how many seconds the stream is delayed.
 People can be sure that the stream really is live.
@@ -251,7 +249,6 @@ People can be sure that the stream really is live.
 This works for livemarked streaming audio, too.
 
 ## Verifying a Livemarked Video
-
 You can download a livemarked video and watch it later.
 You use software to watch it and check the livemarks.  The software can tell you:
 1. The video existed at the time the livemarks were made.
@@ -289,7 +286,6 @@ big-endian 64-bit unsigned integer encoded in lower-case hexadecimal.
 It always includes leading zeros.
 
 ## Block Format
-
 A block is a sequence of hashes and a timestamp.
 ```
 $hash0$hash1$hash2...$hashN$timestamp
@@ -313,13 +309,11 @@ Server blocks form a mesh that the servers continually extend on one side.
 
 Example block with timestamp 2021-10-22T23:18:50Z:
 ```
-ec67fa2bdc5bb3b3f2010fda6951a8b7e984bf1829f5e0cfa22c31d26d2c57a72b24ae40f6a9d998230ea787528dada13395a26f8b9c7c18c38643a806bcde34d239776717251703c0d2a106c6863cbe1c056d058df630948c1431ec2deee9ca7eada897ed053dad443b9b8b3ad621eaf499891ed823880b230f4a61a971b2b31187b8a4177e6ef0ab85c063e60213f02d4ad9fbb618752fecc2b5c1783aad526c1ea02faf76193af6a12f5b5ab6fda7c8e1bf06a3d4a1ae5bdc86f25724eda8e2dd02f94481e7bea3af151ebb890191437ed3eb78687fa482896701b0e0c630a2f050df8d920a5d02397cdab14cce1d11defe0fcdfd26f2770b90cf7bdd77f900000000617346da
+381b6048fb92d3426d442e86c38f56e895d96a586caf5877d5638443ccc6c6e52c9b0e4955b10247d942321326e603ba92aea82d1e1fd813ead9aa1cd3f09e54d239776717251703c0d2a106c6863cbe1c056d058df630948c1431ec2deee9ca7eada897ed053dad443b9b8b3ad621eaf499891ed823880b230f4a61a971b2b31187b8a4177e6ef0ab85c063e60213f02d4ad9fbb618752fecc2b5c1783aad526c1ea02faf76193af6a12f5b5ab6fda7c8e1bf06a3d4a1ae5bdc86f25724eda827ada9d5345160db07663f9c6130e7ee169f745c93d969917faa31866aab09dfd5347a51bb359b702f2fc6f8ca1340f505c03c7d304481fae42a24f33975604800000000617346da
 ```
 
 ## Tokimark Format
-
 A tokimark is a sequence of hashes and a block.
-
 ```
 e0/tokimark $hash0A$hash0B$hash1B$hash2B...$hashNB $block
 ```
@@ -341,11 +335,14 @@ The hashes form a chain:
 This regular expression matches all valid tokimarks:
 `e0/tokimark [0-9a-f]{128}{2,64} [0-9a-f]{128}{1,447}[0-9a-f]{16}`.
 
+Example tokimark:
+```
+e0/tokimark 5552aa41192b46651fdcb33bdee0d9dd4356307be24ed142089ab615500d1f4e975aae9fd82ee628d466a784722dbf908bab736a761457ad69eb3e19b9a57c6f1b4366dac0d37f37b1cf4a85441045b3a22ba572c11d99c7a8f2356b6ea54851162405989eeb786a7384561d0be7c61152de87c260def9873ca536aee666a77dd715729eb9bce054594591393ed03b7123000ff2b5fa75b9ce89c4e31bbbf7b44e5258b81fdf34c97dfb920b1f50b5da410b45f5319ef2c50c784e2be26d31d71770d773492920c7c9e6dba3d67f08e1090f611d6da8e9a34d11b3d3701f745020e93eae07858d066f4d9a3e88634550df992f73400aa5a31adfa5d9d2324535 381b6048fb92d3426d442e86c38f56e895d96a586caf5877d5638443ccc6c6e52c9b0e4955b10247d942321326e603ba92aea82d1e1fd813ead9aa1cd3f09e54d239776717251703c0d2a106c6863cbe1c056d058df630948c1431ec2deee9ca7eada897ed053dad443b9b8b3ad621eaf499891ed823880b230f4a61a971b2b31187b8a4177e6ef0ab85c063e60213f02d4ad9fbb618752fecc2b5c1783aad526c1ea02faf76193af6a12f5b5ab6fda7c8e1bf06a3d4a1ae5bdc86f25724eda827ada9d5345160db07663f9c6130e7ee169f745c93d969917faa31866aab09dfd5347a51bb359b702f2fc6f8ca1340f505c03c7d304481fae42a24f33975604800000000617346da
+```
 
 ## Tokimark-New RPC
 To make a new tokimark for a document,
 the client connects to the server's TCP port and sends the request:
-
 ```
 e0/tokimark-new $document_hash$nonce\n
 ```
@@ -361,7 +358,9 @@ This regular expression matches all valid Tokimark-New RPC requests:
 `e0/tokimark-new [0-9a-f]{256}\n`.
 
 Example request for the document "doc0" and a random nonce:
-`e0/tokimark-new 5552aa41192b46651fdcb33bdee0d9dd4356307be24ed142089ab615500d1f4e975aae9fd82ee628d466a784722dbf908bab736a761457ad69eb3e19b9a57c6ffe3b5b266eb8038a0c06757399624f1debb3e0df2618341054881010ca14c3782ff13aaf83ce9ca4262b5c435cadfb9f3fd87c63ddbfa89de20d38c1c5f25b94\n`
+```
+e0/tokimark-new 5552aa41192b46651fdcb33bdee0d9dd4356307be24ed142089ab615500d1f4e975aae9fd82ee628d466a784722dbf908bab736a761457ad69eb3e19b9a57c6f1b4366dac0d37f37b1cf4a85441045b3a22ba572c11d99c7a8f2356b6ea54851162405989eeb786a7384561d0be7c61152de87c260def9873ca536aee666a77d\n
+```
 
 The server responds with one of:
 - `e0/tokimark $tokimark\n`
@@ -377,8 +376,122 @@ We call this 'backoff'.
 
 When the server returns a `tokimark-permanent-error` response, the client must not retry the request.
 
+## Tokimark-Get-Containing-Block RPC
+To retrieve a server's block that contains a particular hash,
+the client connects to the server's TCP port and sends this request:
+
+```
+e0/tokimark-get-containing-block $hash$timestamp\n
+```
+
+`$hash` is any hash.
+
+`$timestamp` is the time when the hash was created.
+The server will return a block with a timestamp that is `$timestamp` or higher.
+
+This regular expression matches all valid Tokimark-Get-Containing-Block RPC requests:
+`e0/tokimark-get-containing-block [0-9a-f]{128}[0-9a-f]{16}\n`.
+
+The server responds with one of:
+- `e0/tokimark-block $block\n`
+- `e0/tokimark-not-found\n`
+- `e0/tokimark-transient-error $error_message\n`
+- `e0/tokimark-permanent-error $error_message\n`
+
+If the client retries after receiving `tokimark-not-found`, it must use backoff.
+
+## Verify a Tokimark
+A client can verify a tokimark with this procedure:
+1. Verify the format of the tokimark.
+2. Calculate the root hash.
+3. Confirm that the block contains the root hash.
+4. Calculate the block hash.
+5. Connect to any trusted tokimark server
+   and call Tokimark-Get-Containing-Block RPC with the block hash and timestamp.
+6. Confirm that the returned block contains the block hash
+   and its timestamp that is not before the block timestamp.
+7. Optionally, repeat with multiple tokimark servers.
+
+## Offline Tokimark Format
+Once a day, every tokimark server makes a tokimark for every block it created that day.
+We call the tokimark for a particular second a 'daymark'.
+
+A client can use the Get-Daymark RPC to download the daymark for a tokimark.
+It stores the tokimark and daymark together.
+We call such a tokimark an "offline tokimark".
+
+Offline tokimark format:
+```
+e0/tokimark $tokimark\n$daymark`
+```
+
+Example offline tokimark:
+```
+e0/tokimark 5552aa41192b46651fdcb33bdee0d9dd4356307be24ed142089ab615500d1f4e975aae9fd82ee628d466a784722dbf908bab736a761457ad69eb3e19b9a57c6f1b4366dac0d37f37b1cf4a85441045b3a22ba572c11d99c7a8f2356b6ea54851162405989eeb786a7384561d0be7c61152de87c260def9873ca536aee666a77dd715729eb9bce054594591393ed03b7123000ff2b5fa75b9ce89c4e31bbbf7b44e5258b81fdf34c97dfb920b1f50b5da410b45f5319ef2c50c784e2be26d31d71770d773492920c7c9e6dba3d67f08e1090f611d6da8e9a34d11b3d3701f745020e93eae07858d066f4d9a3e88634550df992f73400aa5a31adfa5d9d2324535 381b6048fb92d3426d442e86c38f56e895d96a586caf5877d5638443ccc6c6e52c9b0e4955b10247d942321326e603ba92aea82d1e1fd813ead9aa1cd3f09e54d239776717251703c0d2a106c6863cbe1c056d058df630948c1431ec2deee9ca7eada897ed053dad443b9b8b3ad621eaf499891ed823880b230f4a61a971b2b31187b8a4177e6ef0ab85c063e60213f02d4ad9fbb618752fecc2b5c1783aad526c1ea02faf76193af6a12f5b5ab6fda7c8e1bf06a3d4a1ae5bdc86f25724eda827ada9d5345160db07663f9c6130e7ee169f745c93d969917faa31866aab09dfd5347a51bb359b702f2fc6f8ca1340f505c03c7d304481fae42a24f33975604800000000617346da\n
+fe310de4fa470a31ba73be2ee24d02ec239893701a9bdd7c68e658272dbe486553693248a0a2bdb2dfc55500ce173b5751969e67c5e4037d0a77e76a82fe12de648cdb7bbf9efc26f1713eaba3809ac1bade023b6e441c389841c110bdd97b84f73ededb51fa05194f053ff755fa055a48d8e63a74bf200f462d652c326b34332850a51dc9483a28f4cdd3c805c333b2ba8508297daa101cc63e27a5fa101b188dc9ef130bac2611c1b9ddebdc137c5a242e3f92340f537408df17dea2e3b69a3e4fff3b613e33f99973b0206de4d5eb14f5ed75c320495e03c209ade164a40e4e890b86137687c079792c79b66be4f17f3a9279c064e3cdac136ded1398d313 09806998cd4d961cc1d72ddf1742b35048e812fe406a1852ff55e1b96f3a823b4b6ed9c00b858e794690addf2817b135132b0a525b45d6c5eee752ee0e250c1cb388e31765ca23427f79b0f81aaf9899af83da0bb87d69c671fecf3e515b739ab503322cd7c67f6e463e565a84ba43c0034a1e33d8bf8184e9ea9c47ee3c87588b6155c15ae1a8e158a10fb21313fa7176b2d6164092d003bef3db083658a4f79c7acb9391270dfe57c64fb758880bca1311f66c144682e15fb4c781e27258df569e49677c11fba84ec80bede16a528255240645a8716d15f2206d26e349b8756c727021091f5422b4d4941ed9c01098944ccc62c17e4e41e5dd4036eff1eacd0000000061735080
+```
+
+## Get-Daymark RPC
+To get a daymark for a tokimark, the client connects to the server's TCP port and sends this request:
+
+```
+e0/tokimark-get-daymark $hash$timestamp\n
+```
+
+`$hash` is the hash of the tokimark block.
+
+`$timestamp` is tokimark block timestamp.
+
+This regular expression matches all valid Get-Daymark RPC requests:
+`e0/tokimark-get-daymark [0-9a-f]{128}[0-9a-f]{16}\n`.
+
+The server responds with one of:
+- `e0/tokimark $tokimark\n`
+- `e0/tokimark-not-found\n`
+- `e0/tokimark-pending $timestamp\n`
+- `e0/tokimark-transient-error $error_message\n`
+- `e0/tokimark-permanent-error $error_message\n`
+
+If the client retries after receiving `e0/tokimark-pending`, it must do so at or after `$timestamp`.
+
+## Get-Dayblock RPC
+To get the dayblock for any tokimarks created at a particular time,
+the client connects to the server's TCP port and sends this request:
+
+```
+e0/tokimark-get-dayblock $timestamp\n
+```
+
+This regular expression matches all valid Get-Daymark RPC requests:
+`e0/tokimark-get-daymark [0-9a-f]{16}\n`.
+
+The server responds with one of:
+- `e0/tokimark $block\n`
+- `e0/tokimark-not-found\n`
+- `e0/tokimark-pending $timestamp\n`
+- `e0/tokimark-transient-error $error_message\n`
+- `e0/tokimark-permanent-error $error_message\n`
+
+## Verify an Offline Tokimark
+For one server and day, all the daymarks share a single block.
+We call this the 'dayblock'.
+A daymark's block is a dayblock.
+
+A client can use the Get-Dayblock RPC to download historical dayblocks,
+verify them, and then
+save (dayblock_hash, timestamp) pairs to use later.
+
+A client verifies an offline tokimark with these steps:
+1. Verify the format of the offline tokimark.
+2. Calculate the tokimark root hash.
+3. Confirm that the tokimark block contains the tokimark root hash.
+4. Calculate the tokimark block hash.
+5. Calculate the daymark root hash.
+6. Confirm that the dayblock contains the daymark root hash.
+7. Confirm that the client previously downloaded the dayblock hash and timestamp.
+
+
 ## TO DO
-- Add remaining RPCs
 - Add Solved Problems section
 - Add Unsolved Problems section
 - Update TOC
