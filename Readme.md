@@ -37,6 +37,7 @@ Tokimarks for Verifying Media Files
 - [Solved Problems](#solved-problems)
   - [Blocks Are Too Big](#blocks-are-too-big)
   - [Rate Leak](#rate-leak)
+  - [Known Upload Leak](#known-upload-leak)
 - [TO DO](#to-do)
 
 # Intro
@@ -637,6 +638,24 @@ concurrent connection limit, or higher.
 Additionally, if a client calls New-Tokimark and then disconnects
 before the server creates the new block,
 the server must discard the hash that the client submitted.
+
+## Known Upload Leak
+When you call New-Tokimark RPC, you must send a hash.
+When the hash is the hash of a document,
+you are telling the tokimark server that you have the document.
+If the server also has a copy of the document (or just its hash),
+it can confirm that the hashes match and then record this information.
+
+Additionally, if the server generates a block for only your tokimark or for
+your tokimark and some public files, others who also have a copy of the document
+can perform the same hash calculation as the server
+and find out that the document was tokimarked.
+They could perform this analysis years later, using historical blocks.
+
+To work around this,
+the client creates a nonce and sends the hash of the nonce and the document's hash.
+Since the server and others do not know the nonce,
+they cannot check if your tokimark is for a specific document.
 
 ## TO DO
 - Add Unsolved Problems section
