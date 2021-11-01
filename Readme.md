@@ -23,6 +23,7 @@ Tokimarks for Verifying Media Files
   - [Block](#block)
   - [Tokimark](#tokimark)
   - [Offline Tokimark](#offline-tokimark)
+  - [Aftermark](#aftermark)
 - [Tokimark Servers](#tokimark-servers)
   - [New-Tokimark RPC](#new-tokimark-rpc)
   - [Get-Containing-Block RPC](#get-containing-block-rpc)
@@ -358,6 +359,32 @@ e0/tokimark 5552aa41192b46651fdcb33bdee0d9dd4356307be24ed142089ab615500d1f4e975a
 fe310de4fa470a31ba73be2ee24d02ec239893701a9bdd7c68e658272dbe486553693248a0a2bdb2dfc55500ce173b5751969e67c5e4037d0a77e76a82fe12de2850a51dc9483a28f4cdd3c805c333b2ba8508297daa101cc63e27a5fa101b188dc9ef130bac2611c1b9ddebdc137c5a242e3f92340f537408df17dea2e3b69a3e4fff3b613e33f99973b0206de4d5eb14f5ed75c320495e03c209ade164a40e4e890b86137687c079792c79b66be4f17f3a9279c064e3cdac136ded1398d313 09806998cd4d961cc1d72ddf1742b35048e812fe406a1852ff55e1b96f3a823b4b6ed9c00b858e794690addf2817b135132b0a525b45d6c5eee752ee0e250c1cb388e31765ca23427f79b0f81aaf9899af83da0bb87d69c671fecf3e515b739ab503322cd7c67f6e463e565a84ba43c0034a1e33d8bf8184e9ea9c47ee3c87588b6155c15ae1a8e158a10fb21313fa7176b2d6164092d003bef3db083658a4f79c7acb9391270dfe57c64fb758880bca1311f66c144682e15fb4c781e27258df596a5c1f15e9ad9ba4d19ecf15f0876eee472e6ccc6f44c34b2f1e292947a80aca14a594487515de4bfd5fa931e4e91f8265febae2c1b82b9e57763679e2de000000000061735080
 ```
 
+## Aftermark
+An aftermark is a sequence of bytes with the following format:
+```
+e0/after $hash_base64$timestamp_base64
+```
+
+`$hash_base64` is the 64-byte hash of a Tokimark block,
+encoded in [Base64](https://en.wikipedia.org/wiki/Base64), with no padding.
+This yields 86 characters.
+
+`$timestamp` is the timestamp of the same block,
+encoded as a big-endian 64-bit unsigned integer and then encoded in Base64.
+This yields 11 characters.
+
+Every aftermark is 106 characters long.
+
+This regular expression matches all valid aftermarks:
+`e0/after [A-Za-z0-9+/]{86}[A-Za-z0-9+/]{11}`.
+
+Example aftermark for the block hash
+`fe310de4fa470a31ba73be2ee24d02ec239893701a9bdd7c68e658272dbe486553693248a0a2bdb2dfc55500ce173b5751969e67c5e4037d0a77e76a82fe12de`
+and timestamp `00000000617346da`:
+```
+e0/after /jEN5PpHCjG6c74u4k0C7COYk3Aam918aOZYJy2+SGVTaTJIoKK9st/FVQDOFztXUZaeZ8XkA30Kd+dqgv4S3gAAAABhc0ba
+```
+
 # Tokimark Servers
 Tokimark servers listen on TCP port N (TODO: Update with real port number).
 
@@ -536,46 +563,21 @@ A client verifies an offline tokimark with these steps:
 7. Confirm that the client previously downloaded the dayblock hash and timestamp.
 
 ## Make an Aftermark QR Code
-Every aftermark is a sequence of bytes with the following format:
-```
-e0/aftermark$hash_base64$timestamp_base64
-```
-
-`$hash_base64` is the 64-byte hash of a Tokimark block,
-encoded in [Base64](https://en.wikipedia.org/wiki/Base64), with no padding.
-This yields 86 characters.
-
-`$timestamp` is the timestamp of the same block,
-encoded as a big-endian 64-bit unsigned integer and then encoded in Base64.
-This yields 11 characters.
-
-Every aftermark is 109 characters long.
-
-This regular expression matches all valid aftermarks:
-`e0/aftermark[A-Za-z0-9+/]{86}[A-Za-z0-9+/]{11}`.
-
 To make an aftermark QR code:
 1. Use the New-Tokimark RPC to make a tokimark.
 2. Create the aftermark from the tokimark's block.
 3. Encode the aftermark as a [QR code](https://en.wikipedia.org/wiki/QR_code).
 
-Example aftermark for the block
-`fe310de4fa470a31ba73be2ee24d02ec239893701a9bdd7c68e658272dbe486553693248a0a2bdb2dfc55500ce173b5751969e67c5e4037d0a77e76a82fe12de`
-and timestamp `00000000617346da`:
-```
-e0/aftermark/jEN5PpHCjG6c74u4k0C7COYk3Aam918aOZYJy2+SGVTaTJIoKK9st/FVQDOFztXUZaeZ8XkA30Kd+dqgv4S3gAAAABhc0ba
-```
-
-Example QR codes containing the aftermark:
+Example QR codes containing the example aftermark from [Aftermark](#aftermark) above:
 - Type 4L, 33x33 pixels, stores 114 chars, readable with 7% pixels damaged:
   
   ![Type 4L QR code](media/qr-4l.png)
 - Type 5M, 37x37 pixels, stores 122 chars, readable with 15% pixels damaged:
   
   ![Type 5M QR code](media/qr-5m.png)
-- Type 7Q, 45x45 pixels, stores 125 chars, readable with 25% pixels damaged:
+- Type 6Q, 41x41 pixels, stores 108 chars, readable with 25% pixels damaged:
   
-  ![Type 7Q QR code](media/qr-7q.png)
+  ![Type 6Q QR code](media/qr-6q.png)
 - Type 8H, 49x49 pixels, stores 122 chars, readable with 30% pixels damaged:
   
   ![Type 8H QR code](media/qr-8h.png)
