@@ -31,6 +31,8 @@ Tokimarks for Verifying Media Files
 - [Operations](#operations)
   - [Verify a Tokimark](#verify-a-tokimark)
   - [Verify an Offline Tokimark](#verify-an-offline-tokimark)
+  - [Make an Aftermark QR Code](#make-an-aftermark-qr-code)
+  - [Verify an Aftermark QR Code](#verify-an-aftermark-qr-code)
 - [Unsolved Problems](#known-problems)
 - [Solved Problems](#solved-problems)
   - [Known Upload Leak](#known-upload-leak)
@@ -90,6 +92,7 @@ They edit videos and images to mislead all of us.
 - [Trump tests disinformation policies with new Pelosi video - 2020-02-07 The Verge](https://www.theverge.com/2020/2/7/21128317/nancy-pelosi-donald-trump-disinformation-policy-video-state-of-the-untion)
 - [Fox News runs digitally altered images in coverage of Seattle's protests - 2020-06-12 The Seattle Times](https://www.seattletimes.com/seattle-news/politics/fox-news-runs-digitally-altered-images-in-coverage-of-seattles-protests-capitol-hill-autonomous-zone/)
 - [Trump shares doctored video of Biden with 'manipulated media' Twitter tag - 2020-09-16 Politico](https://www.politico.com/news/2020/09/16/trump-doctored-video-joe-biden-twitter-415863)
+
 They also lie about the time or location of video and images.
 - [Trump posts misleading ad using Ukraine photo - 2020-07-22 BBC](https://www.bbc.com/news/world-us-canada-53500610)
 
@@ -129,7 +132,7 @@ A lottery organizer can publish ahead of time that they will use the hashes prod
 at a particular time as input to a particular very slow algorithm to select the lottery winners.
 Afterward, anyone can verify that the lottery organizers followed the process correctly.
 
-Scientists can pre-register the future tokimark hashes they will use in randomisation for experiments.
+Scientists can pre-register the future tokimark hashes they will use in randomization for experiments.
 They can also publish the tokimark of their input data before randomisation.
 These practices can reduce
 [fraud in medical research](https://blogs.bmj.com/bmj/2021/07/05/time-to-assume-that-health-research-is-fraudulent-until-proved-otherwise/).
@@ -224,12 +227,14 @@ If you're recording audio, you can use an app to play the aftermark as an audio 
 
 Altering a photo or recording to insert an aftermark is very difficult.
 The harder it is to alter, the more you can trust the aftermark.
-Some things make a photo or video harder to alter.  You can do these things to make your photos & videos harder to alter and therefore more trustworthy:
+Some things make a photo or video harder to alter.
+You can do these things to make your photos & videos harder to alter and therefore more trustworthy:
 - Upload the original file created by your camera.  Don't resize or edit it.
 - Record high-resolution video and high-quality audio
 - Save in raw format or use high quality compression.
   Remember that folks must download the entire file to check the tokimark, so don't make the file too big.
-- Include your aftermark in multiple forms: QR code, audio jingle, pole with LED strand, spoken, written on clothing/skin, etc.
+- Include your aftermark in multiple forms:
+  QR code, audio jingle, pole with LED strand, spoken, written on clothing/skin, etc.
 
 When you view a photo or video file, the software can find aftermarks automatically and show you the times.
 
@@ -509,7 +514,7 @@ A client can verify a tokimark with this procedure:
 5. Connect to any trusted tokimark server
    and call Get-Containing-Block RPC with the block hash and timestamp.
 6. Confirm that the returned block contains the block hash
-   and its timestamp that is not before the block timestamp.
+   and its timestamp is not before the block timestamp.
 7. Optionally, repeat with multiple tokimark servers.
 
 ## Verify an Offline Tokimark
@@ -529,6 +534,62 @@ A client verifies an offline tokimark with these steps:
 5. Calculate the daymark root hash.
 6. Confirm that the dayblock contains the daymark root hash.
 7. Confirm that the client previously downloaded the dayblock hash and timestamp.
+
+## Make an Aftermark QR Code
+Every aftermark is a sequence of bytes with the following format:
+```
+e0/aftermark$hash_base64$timestamp_base64
+```
+
+`$hash_base64` is the 64-byte hash of a Tokimark block,
+encoded in [Base64](https://en.wikipedia.org/wiki/Base64), with no padding.
+This yields 86 characters.
+
+`$timestamp` is the timestamp of the same block,
+encoded as a big-endian 64-bit unsigned integer and then encoded in Base64.
+This yields 11 characters.
+
+Every aftermark is 109 characters long.
+
+This regular expression matches all valid aftermarks:
+`e0/aftermark[A-Za-z0-9+/]{86}[A-Za-z0-9+/]{11}`.
+
+To make an aftermark QR code:
+1. Use the New-Tokimark RPC to make a tokimark.
+2. Create the aftermark from the tokimark's block.
+3. Encode the aftermark as a [QR code](https://en.wikipedia.org/wiki/QR_code).
+
+Example aftermark for the block
+`fe310de4fa470a31ba73be2ee24d02ec239893701a9bdd7c68e658272dbe486553693248a0a2bdb2dfc55500ce173b5751969e67c5e4037d0a77e76a82fe12de`
+and timestamp `00000000617346da`:
+```
+e0/aftermark/jEN5PpHCjG6c74u4k0C7COYk3Aam918aOZYJy2+SGVTaTJIoKK9st/FVQDOFztXUZaeZ8XkA30Kd+dqgv4S3gAAAABhc0ba
+```
+
+Example QR codes containing the aftermark:
+- Type 4L, 33x33 pixels, stores 114 chars, readable with 7% pixels damaged:
+  
+  ![Type 4L QR code](media/qr-4l.png)
+- Type 5M, 37x37 pixels, stores 122 chars, readable with 15% pixels damaged:
+  
+  ![Type 5M QR code](media/qr-5m.png)
+- Type 7Q, 45x45 pixels, stores 125 chars, readable with 25% pixels damaged:
+  
+  ![Type 7Q QR code](media/qr-7q.png)
+- Type 8H, 49x49 pixels, stores 122 chars, readable with 30% pixels damaged:
+  
+  ![Type 8H QR code](media/qr-8h.png)
+
+See [QR Code Data Capacity](https://blog.qr4.nl/page/QR-Code-Data-Capacity.aspx)
+and [Morovia Free online QR Code Maker](https://www.morovia.com/free-online-barcode-generator/qrcode-maker.php).
+
+## Verify an Aftermark QR Code
+1. Extract the QR code pixes from an image or video frame.  Save the pixels as an image.
+2. Decode the QR code in the image to get the aftermark.
+3. Decode the aftermark to get the block hash and timestamp.
+4. Make a Get-Containing-Block RPC to any trusted server, providing the block hash and timestamp.
+5. Confirm that the returned block contains the block hash.
+6. Confirm that the returned block's timestamp is after timestamp and within a few seconds of it.
 
 ## TO DO
 - Add Solved Problems section
