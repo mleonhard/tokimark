@@ -134,7 +134,7 @@ at a particular time as input to a particular very slow algorithm to select the 
 Afterward, anyone can verify that the lottery organizers followed the process correctly.
 
 Scientists can pre-register the future tokimark hashes they will use in randomization for experiments.
-They can also publish the tokimark of their input data before randomisation.
+They can also publish the tokimark of their input data before randomization.
 These practices can reduce
 [fraud in medical research](https://blogs.bmj.com/bmj/2021/07/05/time-to-assume-that-health-research-is-fraudulent-until-proved-otherwise/).
 
@@ -218,7 +218,7 @@ You can use software to check the time of the aftermark.
 The software connects to the Internet, to a public tokimark server.
 
 If the photo also has a tokimark,
-you can be sure that the photo was taken between the aftermark's time and the tokimark's time.
+you can be sure that the photo was taken between the aftermark time and the tokimark time.
 
 You can get an app for your phone that displays aftermark QR codes.
 Hold the phone up to the camera when you record or stream.
@@ -565,7 +565,7 @@ A client verifies an offline tokimark with these steps:
 ## Make an Aftermark QR Code
 To make an aftermark QR code:
 1. Use the New-Tokimark RPC to make a tokimark.
-2. Create the aftermark from the tokimark's block.
+2. Create the aftermark from the tokimark block.
 3. Encode the aftermark as a [QR code](https://en.wikipedia.org/wiki/QR_code).
 
 Example QR codes containing the example aftermark from [Aftermark](#aftermark) above:
@@ -586,7 +586,7 @@ See [QR Code Data Capacity](https://blog.qr4.nl/page/QR-Code-Data-Capacity.aspx)
 and [Morovia Free online QR Code Maker](https://www.morovia.com/free-online-barcode-generator/qrcode-maker.php).
 
 ## Verify an Aftermark QR Code
-1. Extract the QR code pixes from an image or video frame.  Save the pixels as an image.
+1. Extract the QR code pixels from an image or video frame.  Save the pixels as an image.
 2. Decode the QR code in the image to get the aftermark.
 3. Decode the aftermark to get the block hash and timestamp.
 4. Make a Get-Containing-Block RPC to any trusted server, providing the block hash and timestamp.
