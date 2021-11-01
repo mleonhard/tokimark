@@ -36,6 +36,7 @@ Tokimarks for Verifying Media Files
   - [Verify an Aftermark QR Code](#verify-an-aftermark-qr-code)
 - [Solved Problems](#solved-problems)
   - [Blocks Are Too Big](#blocks-are-too-big)
+  - [Rate Leak](#rate-leak)
 - [TO DO](#to-do)
 
 # Intro
@@ -612,8 +613,31 @@ whether a particular hash is the left-hand or right-hand child of the node.
 To calculate the hash of a node, we need to know which order to process its child nodes.
 We sort them.
 
+## Rate Leak
+A person can estimate the number of tokimarks added to a server
+by calling New-Tokimark RPC on it once a second.
+They can examine the length of the tokimark hash list and
+infer the number of tokimarks added in that second.
+Archived livemarked recordings may preserve this information for a long time.
+
+To hide this information,
+the server must add random hashes to the set of submitted hashes,
+to increase the size of the set to some large number.
+We call these random values "hash tree padding".
+We call the large number the "new tokimark rate limit" or just "rate limit".
+Hash tree padding ensures that tokimarks generated at different times have
+hash lists of the same length.
+
+To prevent out-of-memory (OOM) conditions, every server must
+limit the number of concurrent client connections.
+This has the side effect of limiting the rate of New-Tokimark calls.
+The server must set its new tokimark rate limit to the
+concurrent connection limit, or higher.
+
+Additionally, if a client calls New-Tokimark and then disconnects
+before the server creates the new block,
+the server must discard the hash that the client submitted.
 
 ## TO DO
-- Add Solved Problems section
 - Add Unsolved Problems section
 - Update TOC
