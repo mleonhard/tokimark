@@ -34,12 +34,9 @@ Tokimarks for Verifying Media Files
   - [Verify an Offline Tokimark](#verify-an-offline-tokimark)
   - [Make an Aftermark QR Code](#make-an-aftermark-qr-code)
   - [Verify an Aftermark QR Code](#verify-an-aftermark-qr-code)
-- [Unsolved Problems](#known-problems)
 - [Solved Problems](#solved-problems)
-  - [Known Upload Leak](#known-upload-leak)
-  - [Rate Leak](#rate-leak)
-  - [Objectionable Language](#objectionable-language)
-- [TODO](#todo)
+  - [Blocks Are Too Big](#blocks-are-too-big)
+- [TO DO](#to-do)
 
 # Intro
 It's 2021 and technology lets us make recordings and share them immediately with people anywhere.
@@ -592,6 +589,29 @@ and [Morovia Free online QR Code Maker](https://www.morovia.com/free-online-barc
 4. Make a Get-Containing-Block RPC to any trusted server, providing the block hash and timestamp.
 5. Confirm that the returned block contains the block hash.
 6. Confirm that the returned block's timestamp is after timestamp and within a few seconds of it.
+
+# Solved Problems
+## Blocks Are Too Big
+An earlier version of tokimarks added every submitted hash to the next block.
+This increased server storage costs.
+
+Blocks could be very large, increasing the size of tokimarks,
+increasing storage and data transfer costs for clients.
+
+To reduce the size of the next block,
+the tokimark server combines all submitted hashes into a single hash to include in the block.
+
+It combines the hashes using a binary hash tree,
+using the submitted hashes for leaves.
+It adds the root hash to the block.
+Each tokimark is the sequence of hashes which form the path up the tree, from leaf to root.
+The hashes are for the elided side-trees.
+
+To keep the tokimark small, the sequence of hashes does not specify
+whether a particular hash is the left-hand or right-hand child of the node.
+To calculate the hash of a node, we need to know which order to process its child nodes.
+We sort them.
+
 
 ## TO DO
 - Add Solved Problems section
