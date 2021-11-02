@@ -687,8 +687,8 @@ An attacker who can prevent other clients from connecting to a server
 could perform a single New-Tokimark request and control the next block hash.
 They could use this technique to influence random numbers derived from server blocks.
 
-To prevent this, the server must add a random value to the hash set used
-for every block.
+To prevent this, the server must add a random 64-byte value to the block's hash set.
+We call this value the "block nonce".
 
 ## TO DO
 - Add Unsolved Problems section
