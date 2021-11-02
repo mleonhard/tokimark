@@ -34,6 +34,9 @@ Tokimarks for Verifying Media Files
   - [Verify an Offline Tokimark](#verify-an-offline-tokimark)
   - [Make an Aftermark QR Code](#make-an-aftermark-qr-code)
   - [Verify an Aftermark QR Code](#verify-an-aftermark-qr-code)
+- [Problems](#problems)
+  - [Verification Leak](#verification-leak)
+  - [Offline Tokimarks are Imprecise](#offline-tokimarks-are-imprecise)
 - [Solved Problems](#solved-problems)
   - [Blocks Are Too Big](#blocks-are-too-big)
   - [Rate Leak](#rate-leak)
@@ -592,6 +595,27 @@ and [Morovia Free online QR Code Maker](https://www.morovia.com/free-online-barc
 4. Make a Get-Containing-Block RPC to any trusted server, providing the block hash and timestamp.
 5. Confirm that the returned block contains the block hash.
 6. Confirm that the returned block's timestamp is after timestamp and within a few seconds of it.
+
+# Problems
+## Verification Leak
+When a client verifies a tokimark,
+it calls Get-Containing-Block RPC and sends the block hash and timestamp to the server.
+The server may record this information.
+
+In any of these cases, the server may infer that the client has particular files:
+- A file's tokimark may have a block that is very rarely used.
+- A collection of tokimarked files will have a particular set of block hashes and timestamps.
+- A livemarked media file contains a sequence of tokimarks.
+
+Workaround: Use offline tokimarks.
+
+## Offline Tokimarks are Imprecise
+An offline tokimark contains a daymark.
+The daymark timestamp may be hours later than the tokimark timestamp.
+
+Daymarks are imprecise and cannot verify marking intervals of livemarked media.
+
+We need a way for the client to trust both timestamps in an offline tokimark.
 
 # Solved Problems
 ## Blocks Are Too Big
