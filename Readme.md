@@ -38,6 +38,7 @@ Tokimarks for Verifying Media Files
   - [Blocks Are Too Big](#blocks-are-too-big)
   - [Rate Leak](#rate-leak)
   - [Known Upload Leak](#known-upload-leak)
+  - [DoS to Control Block Hash](#dos-to-control-block-hash)
 - [TO DO](#to-do)
 
 # Intro
@@ -656,6 +657,14 @@ To work around this,
 the client creates a nonce and sends the hash of the nonce and the document's hash.
 Since the server and others do not know the nonce,
 they cannot check if your tokimark is for a specific document.
+
+## DoS to Control Block Hash
+An attacker who can prevent other clients from connecting to a server
+could perform a single New-Tokimark request and control the next block hash.
+They could use this technique to influence random numbers derived from server blocks.
+
+To prevent this, the server must add a random value to the hash set used
+for every block.
 
 ## TO DO
 - Add Unsolved Problems section
