@@ -6,7 +6,7 @@ Tokimarks for Verifying Media Files
   - [Monitoring Voting and Vote Counting](#monitoring-voting-and-vote-counting)
   - [Reducing Lying by Politicians and Media Producers](#reducing-lying-by-politicians-and-media-producers)
   - [Sousveillance](#sousveillance)
-  - [Randomization](#randomization)
+  - [Random Numbers](#random-numbers)
   - [Data Integrity Checks](#data-integrity-checks)
   - [Digital Signatures](#digital-signatures)
 - [How to Use Tokimarks](#how-to-use-tokimarks)
@@ -117,7 +117,7 @@ If the video has a tokimark, then anyone can verify the time the video was taken
 and check if it has been modified since then.
 The tokimark helps people to trust that the video is real.
 
-## Randomization
+## Random Numbers
 When an app adds a tokimark to a file, it first creates a short scrambled computer code from the file.
 This is called a 'hash'.
 It sends the hash to a public tokimark server.
@@ -132,8 +132,8 @@ A lottery organizer can publish ahead of time that they will use the hashes prod
 at a particular time as input to a particular very slow algorithm to select the lottery winners.
 Afterward, anyone can verify that the lottery organizers followed the process correctly.
 
-Scientists can pre-register the future tokimark hashes they will use in randomization for experiments.
-They can also publish the tokimark of their input data before randomization.
+Scientists can pre-register the future tokimark hashes they will use as random numbers in experiments.
+They can also publish the tokimark of their input data before randomizing their data.
 These practices can reduce
 [fraud in medical research](https://blogs.bmj.com/bmj/2021/07/05/time-to-assume-that-health-research-is-fraudulent-until-proved-otherwise/).
 
@@ -242,7 +242,7 @@ When you view a photo or video file, the software can find aftermarks automatica
 When you stream, you use software to record and send it through the Internet.
 The software can add a tokimark to the file once a second.
 We call this a 'live tokimark'.
-Live tokimarks add about 0.02 Mbps (2.5 KB/s) to the stream bandwidth.
+Live tokimarks add about 0.02 Mbps (2.5 KB/s) (TODO: Update) to the stream bandwidth.
 
 When you stream video, you can hold up a phone with an app that shows a new aftermark QR code every second.
 We call this a 'live aftermark'.
