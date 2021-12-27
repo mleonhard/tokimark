@@ -84,18 +84,25 @@ We can do this cheaply with phones and simple tokimarking apps.
 
 ## Reducing Lying by Politicians and Media Producers
 We put people in prison for
-[lying to customers about their products](https://www.justice.gov/criminal-vns/case/dennis-balius/update) or
-[lying to investors](https://www.justice.gov/usao-ndga/pr/atlanta-ceo-sentenced-prison-securities-fraud).
+[lying to customers about their products](https://www.justice.gov/criminal-vns/case/dennis-balius)
+([PDF](media/United_States_v_Dennis_Balius.2018-09-06.pdf)) or
+[lying to investors](https://www.justice.gov/usao-ndga/pr/atlanta-ceo-sentenced-prison-securities-fraud)
+([PDF](media/Atlanta_CEO_sentenced_to_prison_for_securities_fraud.2021-08-06.pdf)).
 But we don't do this yet for politicians who lie to the citizens they serve or wish to serve.
 And we don't do this for media producers who lie to their viewers.
 
 Some politicians and media producers use disinformation (lies) to influence elections.
 They edit videos and images to mislead all of us.
 - [Trump retweets doctored video of Pelosi to portray her as having 'lost it' - 2019-05-24 Reuters](https://www.reuters.com/article/us-usa-trump-pelosi/trump-retweets-edited-video-of-pelosi-to-portray-her-as-having-lost-it-idUSKCN1SU2CB)
+  ([PDF](media/Trump_retweets_doctored_video_of_Pelosi_to_portray_her_as_having_lost_it.2019-05-24.Reuters.pdf))
 - [Doctored Political Videos And Social Media - 2019-05-25 NPR](https://www.npr.org/2019/05/25/726941833/doctored-political-videos-and-social-media)
+  ([PDF](media/Doctored_Political_Videos_And_Social_Media.2019-05-25.NPR.pdf))
 - [Trump tests disinformation policies with new Pelosi video - 2020-02-07 The Verge](https://www.theverge.com/2020/2/7/21128317/nancy-pelosi-donald-trump-disinformation-policy-video-state-of-the-untion)
+  ([PDF](media/Trump_tests_disinformation_policies_with_new_Pelosi_video.2020-02-07.The_Verge.pdf))
 - [Fox News runs digitally altered images in coverage of Seattle's protests - 2020-06-12 The Seattle Times](https://www.seattletimes.com/seattle-news/politics/fox-news-runs-digitally-altered-images-in-coverage-of-seattles-protests-capitol-hill-autonomous-zone/)
+  ([PDF](media/Fox_News_runs_digitally_altered_images_in_coverage_of_Seattle_protests.2020-06-12.The_Seattle_Times.pdf))
 - [Trump shares doctored video of Biden with 'manipulated media' Twitter tag - 2020-09-16 Politico](https://www.politico.com/news/2020/09/16/trump-doctored-video-joe-biden-twitter-415863)
+  ([PDF](media/Trump_shares_doctored_video_of_Biden_with_manipulated_media_Twitter_tag.2020-09-16.Politico.pdf))
 
 They also lie about the time or location of video and images.
 - [Trump posts misleading ad using Ukraine photo - 2020-07-22 BBC](https://www.bbc.com/news/world-us-canada-53500610)
