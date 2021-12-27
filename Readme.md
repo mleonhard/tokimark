@@ -9,6 +9,7 @@ Tokimarks for Verifying Media Files
   - [Random Numbers](#random-numbers)
   - [Data Integrity Checks](#data-integrity-checks)
   - [Digital Signatures](#digital-signatures)
+  - [Uploaded Photos](#uploaded-photos)
 - [How to Use Tokimarks](#how-to-use-tokimarks)
   - [Make a Tokimark](#make-a-tokimark)
   - [Check a Tokimark](#check-a-tokimark)
@@ -164,6 +165,22 @@ But we can trust a very old signature if it has a tokimark from when the public 
 
 Tokimarks let us de-couple signature validity from key validity.
 This makes digital signatures more useful.
+
+## Uploaded Photos
+A person can use an app to display a tokimark as a QR code.
+When they take a photo, they can include this QR code in the photo.
+Later, other people can use software to check the tokimark in the QR code.
+If the tokimark is valid, the person can be pretty sure that the photo was taken after the tokimark.
+We call the tokimark an 'aftermark'.
+
+Managers of hotels and rental housing often use old photos in online ads.
+Customers cannot trust uploaded photos to show the real condition of the property.
+If uploaded photos include aftermarks, customers can know the age of the photo.
+If the photo was taken very recently, they can trust it to show the real condition of the property.
+
+Aftermarks increase the credibility of uploaded photos and videos
+of things that change in appearance or quality over time.
+Examples: hotels, housing, used vehicles, mass-produced products, and dating profiles.
 
 # How to Use Tokimarks
 ## Make a Tokimark
