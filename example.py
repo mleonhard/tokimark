@@ -51,7 +51,7 @@ print "e0/tokimark-block", lower_hex(c_block)
 print
 
 print "Get-Daymark Request:"
-print "e0/tokimark-get-daymark", lower_hex(block_hash) + lower_hex(timestamp)
+print "e0/tokimark-get-daymark", lower_hex(timestamp)
 print
 hash0a = sha3_512(dayblock)
 hash0b = sha3_512("arbitrary2")

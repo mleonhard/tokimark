@@ -43,6 +43,7 @@ Tokimarks for Verifying Media Files
   - [Rate Leak](#rate-leak)
   - [Known Upload Leak](#known-upload-leak)
   - [DoS to Control Block Hash](#dos-to-control-block-hash)
+- [Alternatives](#alternatives)
 - [TO DO](#to-do)
 
 # Intro
@@ -122,7 +123,6 @@ and assign them jobs to perform.
 People do sousveillance and hold their government workers accountable
 for how they use these permissions and how they perform their jobs.
 
-Tokimarking can be useful for sousveillance.
 When someone shares a video or photo of a government worker doing something objectionable,
 sometimes the worker says that the video is fake.
 If the video has a tokimark, then anyone can verify the time the video was taken
@@ -156,7 +156,7 @@ Organizations can use tokimarks to know if their computer data has been changed 
 ## Digital Signatures
 Digital signatures rely on public key cryptography which is susceptible to advances in technology.
 We cannot trust very old signatures because someone could
-break an old key and then sign a new document with it.
+discover an old key and then sign a new document with it.
 
 This is why every public key has an expiration date.
 A signature lasts only as long as its public key.
@@ -368,8 +368,9 @@ e0/tokimark 5552aa41192b46651fdcb33bdee0d9dd4356307be24ed142089ab615500d1f4e975a
 ```
 
 ## Offline Tokimark
-Once a day, every tokimark server makes a tokimark for every block it created that day.
+Once a day, each tokimark server makes a tokimark for every block it created in the previous 24 hours.
 We call the tokimark for a particular block its 'daymark'.
+The tokimarks all have the same block, called the 'dayblock'.
 
 A client can use the Get-Daymark RPC to download the daymark for a tokimark block.
 It stores the tokimark and daymark together.
@@ -499,17 +500,15 @@ e0/tokimark-block 09806998cd4d961cc1d72ddf1742b35048e812fe406a1852ff55e1b96f3a82
 ```
 
 ## Get-Daymark RPC
-To get a daymark for a tokimark, the client connects to the server's TCP port and sends this request:
+To get a daymark for a tokimark, the client connects to any trusted server's TCP port and sends this request:
 ```
-e0/tokimark-get-daymark $hash$timestamp\n
+e0/tokimark-get-daymark $timestamp\n
 ```
-
-`$hash` is the hash of the tokimark block.
 
 `$timestamp` is the tokimark block timestamp.
 
 This regular expression matches all valid Get-Daymark RPC requests:
-`e0/tokimark-get-daymark [0-9a-f]{128}[0-9a-f]{16}\n`.
+`e0/tokimark-get-daymark [0-9a-f]{16}\n`.
 
 The server responds with one of:
 - `e0/tokimark $tokimark\n`
@@ -522,7 +521,7 @@ If the client retries after receiving `e0/tokimark-pending`, it must do so at or
 
 Example request:
 ```
-e0/tokimark-get-daymark fe310de4fa470a31ba73be2ee24d02ec239893701a9bdd7c68e658272dbe486553693248a0a2bdb2dfc55500ce173b5751969e67c5e4037d0a77e76a82fe12de00000000617346da\n
+e0/tokimark-get-daymark 00000000617346da\n
 ```
 
 Example response:
@@ -531,6 +530,8 @@ e0/tokimark fe310de4fa470a31ba73be2ee24d02ec239893701a9bdd7c68e658272dbe48655369
 ```
 
 ## Get-Dayblock RPC
+TODO: Remove.
+
 To get the dayblock for any tokimarks created at a particular time,
 the client connects to the server's TCP port and sends this request:
 
@@ -576,9 +577,10 @@ For one server and day, all the daymarks share a single block.
 We call this the 'dayblock'.
 A daymark's block is a dayblock.
 
-A client can use the Get-Dayblock RPC to download historical dayblocks,
-verify them, and then
-save (dayblock_hash, timestamp) pairs to use later.
+A client can use the Get-Daymark RPC to download historical daymarks,
+extract their dayblocks,
+verify them,
+and then save (dayblock_hash, timestamp) pairs to use later.
 
 A client verifies an offline tokimark with these steps:
 1. Verify the format of the offline tokimark.
@@ -714,6 +716,64 @@ They could use this technique to influence random numbers derived from server bl
 To prevent this, the server must add a random 64-byte value to the block's hash set.
 We call this value the "block nonce".
 
-## TO DO
-- Add Unsolved Problems section
-- Update TOC
+# Alternatives
+- <https://en.wikipedia.org/wiki/Trusted_timestamping>
+- [Internet X.509 Public Key Infrastructure Time-Stamp Protocol (TSP) - RFC 3161](https://datatracker.ietf.org/doc/html/rfc3161)
+  - Because it relies on trusted certificates, 
+    an attacker who obtains the key of any trusted certificate can forge old timestamps.
+  - Because it relies on trusted certificates,
+    timestamps are valid only while the signing certificate is valid.
+  - Because it relies on public-key cryptography, advances in computer technology
+    may render all old timestamps non-trustworthy.
+  - Uses a text date format, not unix time.
+  - [Trusted Time Stamp Management And Security - ANSI X9.95-2016](https://webstore.ansi.org/Standards/ASCX9/ANSIX9952016?source=preview)
+    extends RFC 3161.
+    Unfortunately, the American National Standards Institute charges USD 100.00
+    for the document.
+- [Planet's Seal mechanism](https://docs.planet.ink/data/seal/)
+  builds a hash tree every 12 hours and includes the root hash in the 
+  [Certificate Transparency Public Ledger](https://certificate.transparency.dev).
+- <https://opentimestamps.org> includes hashes in the Bitcoin blockchain.
+- <https://news.ycombinator.com/item?id=31637150> contains discussion of various alternatives.
+- [Zeitgitter](https://github.com/zeitgitter/zeitgitterd) relies on SHA-1
+  which is not secure enough.
+
+# TO DO
+- Define the "leading edge" of the mesh.  This is the set of blocks for the previous second, issued by healthy
+  public servers.
+- Make a name for duration between the time when a server creates a block and
+  the time when the block is incorporated into the leading edge of the mesh.
+- Allow a client to generate a daymark without revealing the block of their tokimark.
+- Describe how software makers can compile lists of dayblock hashes to use for verifying offline tokimarks.
+  Servers must submit their dayblocks to other public servers.  Software makers should verify this was done.
+- Describe how server operators can find other servers to link to.
+- Make names for:
+  - The list of hashes in a tokimark
+  - The set of hashes used to make the hash tree when creating a new block
+  - The list of hashes in a block
+- Handle the case where a client gets a tokimark from a server and then the server 
+  goes offline forever before the client can get a daymark from it.
+- Update table of contents
+- Offline livemarks.  This is a tokimark with multiple hash sequences and a single block.
+  This merges multiple offline tokimarks into one, avoiding duplicating the block which may be 14KB.
+- Code initial servers in Python & Rust.  Deploy.
+- Apps for non-technical users:
+  - iOS
+  - Android
+  - Windows
+  - macOS
+- CLI tool
+- Libraries
+  - Golang
+  - Rust
+  - Python
+  - Java
+
+# Trademark
+"Tokimark", "Livemark", and "Aftermark" are trademarks of Michael Leonhard.
+
+I intend to grant free trademark licenses to every project that implements the protocol correctly
+and uses good software engineering processes (automated tests, code reviews, up-to-date libraries, etc).
+
+If Tokimark becomes popular, I intend to make a non-profit organization to own the trademarks,
+grant free licenses, verify that implementations are compliant, and pursue violators.
