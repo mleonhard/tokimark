@@ -70,6 +70,11 @@ Then anyone can download the video file,
 use software on their own computer to validate the tokimarks,
 watch the video, and see if the ballot box was handled properly or not.
 
+We can use a tamper-evident box to ship items and detect unauthorized access to it.
+For more on this topic, see
+[Random Mosaic – Detecting unauthorized physical access with beans, lentils and colored rice](https://dys2p.com/en/2021-12-tamper-evident-protection.html)
+([PDF](media/Random_Mosaic_–_Detecting_unauthorized_physical_access_with_beans,_lentils_and_colored_rice.2022-05-24.dys2p.pdf)).
+
 ## Monitoring Voting and Vote Counting
 Tokimarking video cameras can make a verifiable record of election performance.
 
