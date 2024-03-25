@@ -1,0 +1,78 @@
+@startuml
+skinparam BackgroundColor transparent
+skinparam componentStyle rectangle
+skinparam component {
+  borderColor Blue
+  borderThickness 5
+}
+left to right direction
+frame "Block" {
+    [PeerHash1]
+    [PeerHash2]
+    [PeerHash3]
+    [Timestamp]
+    [AnchorBlockHash]
+    rectangle DataHash
+    [PeriodHash]
+}
+[PeerHash1] -[hidden]left-> [PeerHash2]
+[PeerHash2] -[hidden]left-> [PeerHash3]
+[PeerHash3] -[hidden]left-> [Timestamp]
+[Timestamp] -[hidden]left-> [AnchorBlockHash]
+[AnchorBlockHash] -[hidden]left-> DataHash
+DataHash -[hidden]left-> [PeriodHash]
+frame FromClient1 {
+    [DocHash1]
+    [Salt1]
+}
+[DocHash1] -[hidden]left-> [Salt1]
+frame FromClient2 {
+    rectangle DocHash2
+    rectangle Salt2
+}
+DocHash2 -[hidden]left-> Salt2
+frame {
+    rectangle H1
+    [H2]
+    rectangle H3
+}
+H1 -[hidden]left-> [H2]
+[DocHash1] --> H1
+[Salt1] --> H1
+DocHash2 --> [H2]
+Salt2 --> [H2]
+H1 --> H3
+[H2] --> H3
+H3 --> DataHash
+FromClient1 -[hidden]> FromClient2
+frame {
+    rectangle H4
+    rectangle H5
+    rectangle H6
+    rectangle H7
+    rectangle H8
+    rectangle H9
+}
+H4 -[hidden]left-> H5
+H5 -[hidden]left-> H6
+H7 -[hidden]left-> H8
+[PeerHash1] --> H4
+[PeerHash2] --> H4
+[PeerHash3] --> H5
+[Timestamp] --> H5
+[AnchorBlockHash] --> H6
+DataHash --> H6
+[PeriodHash] --> H8
+H4 --> H7
+H5 --> H7
+H6 --> H8
+H7 --> H9
+H8 --> H9
+rectangle TokimarkHash1
+H9 --> TokimarkHash1
+
+legend
+Graph of hash operations, showing how to construct DataHash.
+Blue boxes are hashes that appear in Tokimark.
+end legend
+@enduml

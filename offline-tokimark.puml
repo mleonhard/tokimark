@@ -1,0 +1,82 @@
+@startuml
+skinparam BackgroundColor transparent
+skinparam componentStyle rectangle
+skinparam component {
+  borderColor Blue
+  borderThickness 5
+}
+left to right direction
+frame "Block" {
+    rectangle PeerHash1
+    rectangle PeerHash2
+    rectangle PeerHash3
+    rectangle Timestamp
+    rectangle AnchorBlockHash
+    rectangle DataHash
+    rectangle PeriodHash
+}
+PeerHash1 -[hidden]left-> PeerHash2
+PeerHash2 -[hidden]left-> PeerHash3
+PeerHash3 -[hidden]left-> Timestamp
+Timestamp -[hidden]left-> AnchorBlockHash
+AnchorBlockHash -[hidden]left-> DataHash
+DataHash -[hidden]left-> PeriodHash
+frame TokimarksAfterAnchor {
+    rectangle TokimarkHash1
+    [TokimarkHash2]
+    rectangle TokimarkHash3
+    rectangle TokimarkHash4
+    [TokimarkHash5]
+}
+TokimarkHash1 -[hidden]left-> [TokimarkHash2]
+[TokimarkHash2] -[hidden]left-> TokimarkHash3
+TokimarkHash3 -[hidden]left-> TokimarkHash4
+TokimarkHash4 -[hidden]left-> [TokimarkHash5]
+frame {
+    rectangle H20
+    [H21]
+    rectangle H22
+    rectangle H23
+}
+TokimarkHash1 --> H20
+[TokimarkHash2] --> H20
+TokimarkHash3 --> [H21]
+TokimarkHash4 --> H21
+H20 --> H22
+[H21] --> H22
+H22 --> H23
+[TokimarkHash5] --> H23
+H23 --> PeriodHash
+frame {
+    rectangle H24
+    rectangle H25
+    [H26]
+    [H27]
+    rectangle H28
+    rectangle H29
+}
+H24 -[hidden]left-> H25
+H25 -[hidden]left-> [H26]
+[H27] -[hidden]left-> H28
+H21 -[hidden]right->H23
+PeerHash1 --> H24
+PeerHash2 --> H24
+PeerHash3 --> H25
+Timestamp --> H25
+AnchorBlockHash --> [H26]
+DataHash --> [H26]
+PeriodHash --> H28
+H24 --> [H27]
+H25 --> [H27]
+[H26] --> H28
+[H26] -[hidden]-> H29
+[H27] --> H29
+H28 --> H29
+rectangle TokimarkHash6
+H29 --> TokimarkHash6
+
+legend
+Graph of hash operations showing how to construct PeriodHash.
+An Offline Tokimark for TokimarkHash1 will include the blue boxes to allow validating from TokimarkHash1 through TokimarkHash6.
+end legend
+@enduml
